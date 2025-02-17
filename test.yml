@@ -1,1 +1,57 @@
-ggg
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: Clear yum cache for all users
+      yum:
+        update_cache: yes
+        state: present
+      register: yum_cache_result
+      failed_when: yum_cache_result.rc != 0  # Fail if yum update_cache fails
+      vars:
+        # Important:  This loop iterates through *all* UIDs, which is usually not what you want.
+        # You should restrict this to specific users or groups if possible.
+        # See the improved example below for how to do this.
+        _user_id: "{{ item }}"
+      loop: "{{ range(0, 65535) | list }}" # Iterate through all possible UIDs (0-65535) - Use with caution!
+      when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
+      debugger: yes # Enable the debugger for this task
+
+    - debug: # Print the yum cache result for debugging
+        msg: "Yum cache result for UID {{ _user_id }}: {{ yum_cache_result }}"
+
+    # Example of a *better* approach using a list of users:
+    - name: Clear yum cache for specific users (Recommended)
+      yum:
+        update_cache: yes
+        state: present
+      register: yum_cache_result
+      failed_when: yum_cache_result.rc != 0
+      loop:
+        - user1
+        - user2  # Add more users as needed
+        - root # Always a good idea to clear root's cache
+      loop_control:
+        loop_var: target_user
+      become_user: "{{ target_user }}" # Run the command as each user
+      when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
+      debugger: yes
+
+    - debug:
+        msg: "Yum cache result for user {{ target_user }}: {{ yum_cache_result }}"
+
+    # Clear dnf cache (if applicable - CentOS 7 generally uses yum)
+    - name: Clear dnf cache (if dnf is installed)
+      dnf:
+        clean: all
+      when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7' and ansible_facts['packages']['dnf'] is defined # Check if dnf is installed
+      debugger: yes
+      ignore_errors: yes # dnf might not be installed; don't fail the playbook if it isn't
+
+    - name: Clear package-cleanup cache (for orphaned packages)
+      command: package-cleanup --cleandup
+      when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
+      debugger: yes
+      ignore_errors: yes
+
+    # Clear other potential caches (if needed)
