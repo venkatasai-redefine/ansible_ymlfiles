@@ -30,9 +30,8 @@
         state: started
         enabled: yes
 
-    - name: Ensure Prometheus is running (for status check)
+    - name: Ensure Prometheus is running
       command: systemctl status prometheus
       register: prometheus_status
       failed_when: "'active (running)' not in prometheus_status.stdout"
       changed_when: false
-
