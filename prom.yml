@@ -1,0 +1,38 @@
+---
+- name: Install Prometheus on Rocky Linux
+  hosts: all
+  become: true
+  tasks:
+    - name: Install required dependencies
+      yum:
+        name:
+          - yum-utils
+          - epel-release
+        state: present
+
+    - name: Add Prometheus YUM repository
+      yum_repository:
+        name: prometheus
+        description: Prometheus Repository
+        baseurl: https://packages.prometheus.io/rpm
+        enabled: yes
+        gpgcheck: yes
+        gpgkey: https://packages.prometheus.io/gpg
+
+    - name: Install Prometheus
+      yum:
+        name: prometheus
+        state: present
+
+    - name: Start and enable Prometheus service
+      service:
+        name: prometheus
+        state: started
+        enabled: yes
+
+    - name: Ensure Prometheus is running (for status check)
+      command: systemctl status prometheus
+      register: prometheus_status
+      failed_when: "'active (running)' not in prometheus_status.stdout"
+      changed_when: false
+
