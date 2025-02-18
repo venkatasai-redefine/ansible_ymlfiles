@@ -3,7 +3,7 @@
   become: false
   tasks:
 
-    - command: cp -r /home/ansible/2022/* /tmp/ ; cd /tmp ; yum localinstall *.rpm -y
+    - command: cp -r /home/ansible/2022 /tmp/ ; cd /tmp ; yum localinstall *.rpm -y
 
  
  
