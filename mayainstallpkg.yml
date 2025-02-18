@@ -6,7 +6,7 @@
 # Author: Venkata Sai Prasanna Manduva
 - name: install maya 2020 packages and deps
   vars:
-    - ans_home: PATH of maya packes-----
+    - ans_home: /home/ansible/2022
   shell: yum localinstall *.rpm -y
   args:
     chdir: '{{ ans_home }}mayapkg'
