@@ -1,12 +1,41 @@
 ---
-- name: Check CentOS OS and version
-  hosts: all
+- name: Check CentOS OS and version and export to HTML
+  hosts: localhost
   gather_facts: yes
   tasks:
     - name: Check the CentOS version
       command: cat /etc/centos-release
       register: centos_version
 
-    - name: Display the CentOS version
+    - name: Create HTML file with OS version information
+      copy:
+        dest: /tmp/centos_version.html
+        content: |
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>CentOS Version Info</title>
+              <style>
+                  body {
+                      font-family: Arial, sans-serif;
+                      padding: 20px;
+                  }
+                  h1 {
+                      color: #2c3e50;
+                  }
+                  p {
+                      color: #34495e;
+                  }
+              </style>
+          </head>
+          <body>
+              <h1>CentOS Version Information</h1>
+              <p><strong>OS Version:</strong> {{ centos_version.stdout }}</p>
+          </body>
+          </html>
+    
+    - name: Inform the user of the HTML file location
       debug:
-        msg: "The CentOS version is: {{ centos_version.stdout }}"
+        msg: "CentOS version info has been written to /tmp/centos_version.html"
