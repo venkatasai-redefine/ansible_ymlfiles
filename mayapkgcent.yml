@@ -1,14 +1,17 @@
----
-- name: install maya license packages for cent
-  vars:
-    - ans_home: /jobs/share/ITtest/Maya_2022_Linux/packages
-  shell: yum localinstall *.rpm -y
-  args:
-    chdir: '{{ ans_home }}mayapkg'
-    warn: false 
-  register: output
+- hosts: all
+  gather_facts: no
+  become: false
+  tasks:
+
+    - command: cd /jobs/share/ITtest/Maya_2022_Linux/packages ; yum localinstall *.rpm -y
+ 
+ 
+ 
 
 
-- name: output of command  
-  debug: 
-    msg: '{{  output.stdout_lines }}'
+      register: out
+
+
+
+    - debug:
+         msg: '{{ out.stdout_lines }}'
