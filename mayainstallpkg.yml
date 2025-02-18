@@ -3,7 +3,6 @@
 #  copy: 
 #    src: ./mayapk
 #    dest: /mayapk/
-# Author: Venkata Sai Prasanna Manduva
 - name: install maya 2020 packages and deps
   vars:
     - ans_home: /home/ansible/2022
