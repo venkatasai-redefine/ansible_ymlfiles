@@ -16,11 +16,6 @@
 #           '{{ ans_home }}/mayapkg/xcb-util-wm-0.4.1-5.el7.x86_64.rpm']
 #    state: present 
 
-- name: check MayaConfig file and directory exist
-  stat:
-    path: /var/opt/Autodesk/Adlm/Maya2022/MayaConfig.pit
-  register: folder_file
-
 - name: checking MayaConfig.pit
   debug: 
     msg: File MayaConfig.pit already present system configured
