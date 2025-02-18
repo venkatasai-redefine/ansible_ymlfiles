@@ -1,7 +1,12 @@
 ---
-- name: check the CentOS version
-#    msg: "Found CentOS 7 or bigger"
-#  when: ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "7" 
-    msg: 
-    - "Operating system found : {{ ansible_facts['distribution'] }}"
-    - "Version : {{ ansible_facts['distribution_major_version'] }}"
+- name: Check CentOS OS and version
+  hosts: all
+  gather_facts: yes
+  tasks:
+    - name: Check the CentOS version
+      command: cat /etc/centos-release
+      register: centos_version
+
+    - name: Display the CentOS version
+      debug:
+        msg: "The CentOS version is: {{ centos_version.stdout }}"
