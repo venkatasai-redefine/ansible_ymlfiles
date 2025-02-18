@@ -1,6 +1,6 @@
 ---
 - name: Check CentOS OS and version and export to HTML
-  hosts: localhost
+  hosts: all
   gather_facts: yes
   tasks:
     - name: Check the CentOS version
