@@ -1,0 +1,54 @@
+---
+#- name: copy maya packaes 
+#  copy: 
+#    src: ./mayapk
+#    dest: /mayapk/
+# Author: Venkata Sai Prasanna Manduva
+- name: install maya 2020 packages and deps
+  vars:
+    - ans_home: PATH of maya packes-----
+  shell: yum localinstall *.rpm -y
+  args:
+    chdir: '{{ ans_home }}mayapkg'
+    warn: false 
+  register: output
+
+- name: check MayaConfig file and directory exist
+  stat:
+    path: /var/opt/Autodesk/Adlm/Maya2020/MayaConfig.pit
+  register: folder_file
+
+- name: checking MayaConfig.pit
+  debug: 
+    msg: File MayaConfig.pit already present system configured
+  when: folder_file.stat.exists
+
+- name: creating Maya2020 directory
+  file:
+    path: /var/opt/Autodesk/Adlm/Maya2020
+    state: directory
+  when: folder_file.stat.exists == false
+
+
+#- name: check file exists
+  #stat:
+  #  path: /var/opt/Autodesk/Adlm/Maya2022/MayaConfig.pit
+  #register: file
+
+- name: copying MayaConfig.pit
+  copy:
+    src: ./config_files/MayaConfig_2020.pit
+    dest: /var/opt/Autodesk/Adlm/Maya2020/MayaConfig.pit
+  when: folder_file.stat.exists == false
+
+- name: mapping MayaConfig.pit
+  command: /opt/Autodesk/AdskLicensing/Current/helper/AdskLicensingInstHelper register -pk 657L1 -pv 2020.0.0.F -el EN_US -cf /var/opt/Autodesk/Adlm/Maya2020/MayaConfig.pit -lm '{{ type }}' 
+  when: folder_file.stat.exists == false
+
+- name: checking the register maya
+  command: /opt/Autodesk/AdskLicensing/Current/helper/AdskLicensingInstHelper list
+  register: output
+
+- name: output of command  
+  debug: 
+    msg: '{{  output.stdout_lines }}'
