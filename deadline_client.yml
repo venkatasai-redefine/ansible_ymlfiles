@@ -7,5 +7,5 @@
 --mode unattended --connectiontype Remote --proxyrootdir 10.1.71.110:4433 --dbsslcertificate /tech/apps/thinkbox/10.3/Deadline10/certs/Deadline10RemoteClient.pfx --dbsslpassword s3cr3tp@$$ --daemonuser dna  --slavestartup true --launcherdaemon true 
         register: out
 
-    - debug:
-         msg: '{{ out.stdout_lines }}'
+      - debug:
+          msg: '{{ out.stdout_lines }}'
