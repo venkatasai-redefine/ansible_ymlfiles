@@ -3,7 +3,7 @@
   become: false
   tasks:
 
-    - command: rpm -ivh /root/nomachine_8.16.1_1_x86_64.rpm 
+    - command: rpm -i /root/nomachine_8.16.1_1_x86_64.rpm 
  
  
 
