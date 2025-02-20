@@ -7,5 +7,5 @@
 
         register: out
 
-    - debug:
+      - debug:
          msg: '{{ out.stdout_lines }}'
