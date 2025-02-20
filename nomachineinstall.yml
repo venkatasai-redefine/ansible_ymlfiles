@@ -1,15 +1,9 @@
+---
 - hosts: all
-  gather_facts: no
-  become: false
+  become: true  
+
   tasks:
-
-    - command: rpm -i /root/nomachine_8.16.1_1_x86_64.rpm 
- 
- 
-
-      register: out
-
-
-
-    - debug:
-         msg: '{{ out.stdout_lines }}'
+    - name: Install RPM package
+      yum:  # Use the yum module for CentOS 7
+        name: /root/nomachine_8.16.1_1_x86_64.rpm  
+        state: present
