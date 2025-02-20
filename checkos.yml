@@ -4,38 +4,5 @@
   gather_facts: yes
   tasks:
     - name: Check the CentOS version
-      command: cat /etc/centos-release
-      register: centos_version
-
-    - name: Create HTML file with OS version information
-      copy:
-        dest: /tmp/centos_version.html
-        content: |
-          <!DOCTYPE html>
-          <html lang="en">
-          <head>
-              <meta charset="UTF-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>CentOS Version Info</title>
-              <style>
-                  body {
-                      font-family: Arial, sans-serif;
-                      padding: 20px;
-                  }
-                  h1 {
-                      color: #2c3e50;
-                  }
-                  p {
-                      color: #34495e;
-                  }
-              </style>
-          </head>
-          <body>
-              <h1>CentOS Version Information</h1>
-              <p><strong>OS Version:</strong> {{ centos_version.stdout }}</p>
-          </body>
-          </html>
-    
-    - name: Inform the user of the HTML file location
-      debug:
-        msg: "CentOS version info has been written to /tmp/centos_version.html"
+      command: cd /tech/installers/thinkbox/10.3 ; ./DeadlineClient-10.3.0.10-linux-x64-installer.run \
+--mode unattended --connectiontype Remote --proxyrootdir 10.1.71.110:4433 --dbsslcertificate /tech/apps/thinkbox/10.3/Deadline10/certs/Deadline10RemoteClient.pfx --dbsslpassword s3cr3tp@$$ --daemonuser dna  --slavestartup true --launcherdaemon true 
