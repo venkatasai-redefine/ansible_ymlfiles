@@ -1,13 +1,28 @@
 ---
-- hosts: all
-  become: true  
-
+- name: Install NoMachine 
+  hosts: all
+  become: true
   tasks:
-    - name: Install RPM package
-      yum:  # Use the yum module for CentOS 7
-        name: /jobs/share/ITtest/sai/nomachine_8.14.2_1_x86_64.rpm  
-        state: present
-      register: rpm_install_result
 
-    - debug:
-        msg: "RPM installation result: {{ rpm_install_result }}"
+    - name: Copy NoMachine RPM to target system
+      copy:
+        src: /jobs/share/ITtest/sai/nomachine_8.16.1_1_x86_64.rpm
+        dest: /tmp/nomachine_8.16.1_1_x86_64.rpm
+        mode: '0644'
+
+    - name: Install NoMachine Server RPM
+      yum:
+        name: /tmp/nomachine_8.16.1_1_x86_64.rpm
+        state: present
+
+    - name: Start NoMachine server service
+      systemd:
+        name: nomachine
+        state: started
+        enabled: yes
+
+    - name: Verify NoMachine server service is running
+      systemd:
+        name: nomachine
+        state: started
+        
