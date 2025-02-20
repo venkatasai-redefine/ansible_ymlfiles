@@ -1,0 +1,15 @@
+- hosts: all
+  gather_facts: no
+  become: false
+  tasks:
+
+    - command: rpm -ivh /root/nomachine_8.16.1_1_x86_64.rpm 
+ 
+ 
+
+      register: out
+
+
+
+    - debug:
+         msg: '{{ out.stdout_lines }}'
