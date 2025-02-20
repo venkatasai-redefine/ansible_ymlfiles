@@ -5,5 +5,5 @@
   tasks:
     - name: Install RPM package
       yum:  # Use the yum module for CentOS 7
-        name: /root/nomachine_8.16.1_1_x86_64.rpm  
+        name: nomachine_8.16.1_1_x86_64.rpm  
         state: present
