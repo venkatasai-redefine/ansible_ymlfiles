@@ -6,7 +6,7 @@
 
     - name: Copy NoMachine RPM to target system
       copy:
-        src: /jobs/share/ITtest/sai/nomachine_8.16.1_1_x86_64.rpm
+        src: /root/nomachine_8.16.1_1_x86_64.rpm
         dest: /tmp/nomachine_8.16.1_1_x86_64.rpm
         mode: '0644'
 
