@@ -2,13 +2,7 @@
 - hosts: all
   become: true
   tasks:
-    - name: Check if NoMachine is already installed
-      yum:
-        list: installed
-        name: nxserver  # Or the actual package name if different
-      register: nx_installed
-
-    - name: Install NoMachine from local RPM (if not already installed)
+       - name: Install NoMachine from local RPM (if not already installed)
       yum:
         name: /jobs/share/ITtest/sai/nomachine_8.16.1_1_x86_64.rpm  
         state: present
