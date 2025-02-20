@@ -1,0 +1,10 @@
+- hosts: all
+  gather_facts: no
+  become: false
+  tasks:
+
+    - shell: sudo cp -r /dd/home/ansible/ansible_works/snmpd.conf /etc/snmp/ ; sudo systemctl restart snmpd
+      register: out
+
+    - debug:
+         msg: '{{ out.stdout_lines }}'
