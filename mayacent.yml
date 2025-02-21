@@ -3,7 +3,7 @@
   become: false
   tasks:
 
-    - command: cd /tech/installers/thinkbox/10.3 
+    - command: init 6
  
  
 
