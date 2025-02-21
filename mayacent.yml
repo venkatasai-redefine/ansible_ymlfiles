@@ -3,7 +3,7 @@
   become: false
   tasks:
 
-    - command: init 6
+    - command: sudo init 6
  
  
 
