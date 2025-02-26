@@ -1,16 +1,26 @@
 ---
-- name: repo change CentOS 7
+- name: Repo change
   hosts: all
-  become: yes  
+  become: yes  # To run commands as root if needed
   tasks:
-    - name: Run the first command
+    - name: old repo moving 
       ansible.builtin.shell: |
         mv /etc/yum.repos.d/*.repo /var/
-    
-    - name: Run the second command
+      register: command1_output
+
+    - name: copying new repo file from server
       ansible.builtin.shell: |
         cp -r /jobs/share/ITtest/sai/*.repo /etc/yum.repos.d/
+      register: command2_output
 
-    - name: Run the third command
+    - name: yum clean 
       ansible.builtin.shell: |
         yum clean all
+      register: command3_output
+
+    - name: Debug all command outputs at the end
+      ansible.builtin.debug:
+        msg:
+          - "Command 1 Output: {{ command1_output.stdout }}"
+          - "Command 2 Output: {{ command2_output.stdout }}"
+          - "Command 3 Output: {{ command3_output.stdout }}"
