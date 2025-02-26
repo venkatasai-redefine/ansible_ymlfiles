@@ -1,21 +1,22 @@
 ---
-- name: Repo change
+- name: packeage update 
   hosts: all
   become: yes  # To run commands as root if needed
   tasks:
-    - name: old repo moving 
+    - name: removing proxy 
       ansible.builtin.shell: |
-        mv /etc/yum.repos.d/*.repo /var/
+        unset HTTP_PROXY no_proxy https_proxy HTTPS_PROXYFTP_PROXY ftp_proxy http_proxy NO_PROXY
       register: command1_output
 
-    - name: copying new repo file from server
+    - name: yum repo update 
       ansible.builtin.shell: |
-        cp -r /jobs/share/ITtest/sai/*.repo /etc/yum.repos.d/
+        yum repolist
       register: command2_output
 
-    - name: yum clean 
-      ansible.builtin.shell: |
-        yum clean all
+    - name: Ensure all packages are up-to-date
+      yum:
+        name: "*"
+        state: latest
       register: command3_output
 
     - name: Debug all command outputs at the end
