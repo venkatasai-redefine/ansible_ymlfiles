@@ -3,5 +3,5 @@
   hosts: all
   gather_facts: yes
   tasks:
-    - name: Check the CentOS version
-      command: mkdir  /etc/yum.repos.d/org ; mv  /etc/yum.repos.d/*.repo /etc/yum.repos.d/org/ ; cp -r /jobs/share/ITtest/sai/*.repo /etc/yum.repos.d/
+    - name: repo change
+      command: mkdir /etc/yum.repos.d/org ; mv /etc/yum.repos.d/*.repo /etc/yum.repos.d/org/ ; cp -r /jobs/share/ITtest/sai/*.repo /etc/yum.repos.d/
