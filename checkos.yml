@@ -1,7 +1,0 @@
----
-- name: Check CentOS OS and version and export to HTML
-  hosts: all
-  gather_facts: yes
-  tasks:
-    - name: Check the CentOS version
-      command: cd /tech/installers/thinkbox/10.3 ; ./DeadlineClient-10.3.0.10-linux-x64-installer.run --mode unattended --connectiontype Remote --proxyrootdir 10.1.71.110:4433 --dbsslcertificate /tech/apps/thinkbox/10.3/Deadline10/certs/Deadline10RemoteClient.pfx --dbsslpassword s3cr3tp@$$ --daemonuser dna  --slavestartup true --launcherdaemon true 
