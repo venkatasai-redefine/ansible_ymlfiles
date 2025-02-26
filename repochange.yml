@@ -1,7 +1,16 @@
 ---
-- name: repo change
+- name: repo change CentOS 7
   hosts: all
-  gather_facts: yes
+  become: yes  
   tasks:
-    - name: repo change
-      command: mkdir /etc/yum.repos.d/org ; mv /etc/yum.repos.d/*.repo /etc/yum.repos.d/org/ ; cp -r /jobs/share/ITtest/sai/*.repo /etc/yum.repos.d/
+    - name: Run the first command
+      ansible.builtin.shell: |
+        mkdir /etc/yum.repos.d/org
+    
+    - name: Run the second command
+      ansible.builtin.shell: |
+        mv /etc/yum.repos.d/*.repo /etc/yum.repos.d/org/
+
+    - name: Run the third command
+      ansible.builtin.shell: |
+        cp -r /jobs/share/ITtest/sai/*.repo /etc/yum.repos.d/
