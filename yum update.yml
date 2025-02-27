@@ -5,23 +5,16 @@
   tasks:
     - name: removing proxy 
       ansible.builtin.shell: |
-        unset HTTP_PROXY no_proxy https_proxy HTTPS_PROXYFTP_PROXY ftp_proxy http_proxy NO_PROXY ; yum repolist ; yumupdate -y
+        unset HTTP_PROXY no_proxy https_proxy HTTPS_PROXYFTP_PROXY ftp_proxy http_proxy NO_PROXY ; yum repolist ; 5s ; yum update -y
       register: command1_output
 
     - name: yum repo update 
       ansible.builtin.shell: |
-        yum repolist
+        cat /etc/os-release
       register: command2_output
-
-    - name: Ensure all packages are up-to-date
-      yum:
-        name: "*"
-        state: latest
-      register: command3_output
 
     - name: Debug all command outputs at the end
       ansible.builtin.debug:
         msg:
           - "Command 1 Output: {{ command1_output.stdout }}"
           - "Command 2 Output: {{ command2_output.stdout }}"
-          - "Command 3 Output: {{ command3_output.stdout }}"
