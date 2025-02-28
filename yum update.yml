@@ -1,7 +1,7 @@
 ---
 - name: packeage update 
   hosts: all
-  become: yes  # To run commands as root if needed
+  become: no
   tasks:
     - name: removing proxy 
       ansible.builtin.shell: |
