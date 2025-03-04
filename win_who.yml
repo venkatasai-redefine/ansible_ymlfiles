@@ -1,5 +1,5 @@
 ---
-- hosts: windows_servers
+- hosts: all
   gather_facts: false
   tasks:
     - name: Get logged-in user
