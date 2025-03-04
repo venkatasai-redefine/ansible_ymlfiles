@@ -1,17 +1,22 @@
 ---
-- name: Find the user logged in via PowerShell
-  hosts: all
+- hosts: windows_servers
+  gather_facts: false
   tasks:
-    - name: Copy PowerShell script to remote machine
-      ansible.windows.win_copy:
-        src: /root/find.ps1
-        dest: C:\temp\find_logged_in_user.ps1
+    - name: Get logged-in user
+      win_command: 'query user'
+      register: logged_in_users
 
-    - name: Execute the PowerShell script
-      ansible.windows.win_shell: |
-        powershell.exe -ExecutionPolicy Bypass -File C:\temp\find_logged_in_user.ps1
-      register: result
+    - name: Parse logged-in user
+      set_fact:
+        current_user: "{{ logged_in_users.stdout_lines | select('search', '\\>') | first | regex_replace('\\>.*', '') | trim }}"
+      when: logged_in_users.stdout_lines | select('search', '\\>') | list | length > 0
 
-    - name: Show the output from the script
+    - name: Display logged-in user
       debug:
-        msg: "{{ result.stdout }}"
+        msg: "The currently logged-in user is: {{ current_user }}"
+      when: current_user is defined
+
+    - name: Handle no logged-in user
+      debug:
+        msg: "No user is currently logged in."
+      when: current_user is not defined or current_user == ""
