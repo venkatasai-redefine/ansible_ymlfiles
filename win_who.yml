@@ -1,6 +1,6 @@
 ---
 - name: Find the user logged in via PowerShell
-  hosts: windows
+  hosts: all
   tasks:
     - name: Copy PowerShell script to remote machine
       ansible.windows.win_copy:
