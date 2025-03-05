@@ -1,22 +1,7 @@
----
-- hosts: all
-  gather_facts: false
+- name: Gather Windows Facts
+  hosts: all
+  gather_facts: true
   tasks:
-    - name: Get logged-in user
-      win_command: 'query user'
-      register: logged_in_users
-
-    - name: Parse logged-in user
-      set_fact:
-        current_user: "{{ logged_in_users.stdout_lines | select('search', '\\>') | first | regex_replace('\\>.*', '') | trim }}"
-      when: logged_in_users.stdout_lines | select('search', '\\>') | list | length > 0
-
-    - name: Display logged-in user
+    - name: Display all facts (for demonstration)
       debug:
-        msg: "The currently logged-in user is: {{ current_user }}"
-      when: current_user is defined
-
-    - name: Handle no logged-in user
-      debug:
-        msg: "No user is currently logged in."
-      when: current_user is not defined or current_user == ""
+        var: ansible_facts
