@@ -5,7 +5,7 @@
   tasks:
     - name: shohtcut package 
       ansible.builtin.shell: |
-        unset HTTP_PROXY no_proxy https_proxy HTTPS_PROXY FTP_PROXY ftp_proxy http_proxy NO_PROXY ; flatpak install -y flathub org.shotcut.Shotcut ; flatpak run org.shotcut.Shotcut
+        unset HTTP_PROXY no_proxy https_proxy HTTPS_PROXY FTP_PROXY ftp_proxy http_proxy NO_PROXY ; flatpak install -y flathub org.shotcut.Shotcut
       register: command1_output
 
     - name: blender 
