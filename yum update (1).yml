@@ -1,0 +1,20 @@
+---
+- name: packeage update 
+  hosts: all
+  become: no
+  tasks:
+    - name: removing proxy 
+      ansible.builtin.shell: |
+        unset HTTP_PROXY no_proxy https_proxy HTTPS_PROXYFTP_PROXY ftp_proxy http_proxy NO_PROXY ; yum repolist; yum update -y
+      register: command1_output
+
+    - name: yum repo update 
+      ansible.builtin.shell: |
+        cat /etc/os-release
+      register: command2_output
+
+    - name: Debug all command outputs at the end
+      ansible.builtin.debug:
+        msg:
+          - "Command 1 Output: {{ command1_output.stdout }}"
+          - "Command 2 Output: {{ command2_output.stdout }}"
