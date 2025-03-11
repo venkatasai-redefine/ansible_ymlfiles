@@ -3,14 +3,14 @@
   hosts: all
   become: no
   tasks:
-    - name: removing proxy 
+    - name: shohtcut package 
       ansible.builtin.shell: |
-        unset HTTP_PROXY no_proxy https_proxy HTTPS_PROXYFTP_PROXY ftp_proxy http_proxy NO_PROXY ; yum repolist; yum update -y
+        unset HTTP_PROXY no_proxy https_proxy HTTPS_PROXYFTP_PROXY ftp_proxy http_proxy NO_PROXY ; flatpak install flathub org.shotcut.Shotcut ; flatpak run org.shotcut.Shotcut
       register: command1_output
 
-    - name: yum repo update 
+    - name: blender 
       ansible.builtin.shell: |
-        cat /etc/os-release
+        cp -r /apps/sreelinux/blender.desktop /usr/share/applications/
       register: command2_output
 
     - name: Debug all command outputs at the end
