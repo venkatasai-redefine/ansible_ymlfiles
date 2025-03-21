@@ -1,33 +1,35 @@
 ---
-- name: Get debug information of shotcut
+- name: Gather debug information from 300 Linux machines
   hosts: all
   gather_facts: no
   tasks:
-    - name: Get installed flatpak packages with debug
-      command: flatpak list | grep shotcut
-      register: flatpak_packages
-      ignore_errors: yes  
-    - name: Capture debug information for the flatpak command
+    - name: Run a dummy command to collect debug info (e.g., "uptime")
+      command: uptime
+      register: uptime_output
+      ignore_errors: yes  # In case of failure, continue to the next host
+
+    - name: Collect debug information
       debug:
         msg: |
           Host: {{ inventory_hostname }}
-          Command: flatpak list | grep shotcut
-          stdout: "{{ flatpak_packages.stdout }}"
-          stderr: "{{ flatpak_packages.stderr }}"
-          returncode: "{{ flatpak_packages.rc }}"
-          failed: "{{ flatpak_packages.failed }}"
-
-    - name: Append the debug information to a central output file
+          Command: uptime
+          stdout: "{{ uptime_output.stdout }}"
+          stderr: "{{ uptime_output.stderr }}"
+          returncode: "{{ uptime_output.rc }}"
+          failed: "{{ uptime_output.failed }}"
+          ---
+    
+    - name: Append all debug information to a central output file
       local_action:
         module: copy
         content: |
           Host: {{ inventory_hostname }}
-          Command: flatpak list --app --columns=name
-          stdout: "{{ flatpak_packages.stdout }}"
-          stderr: "{{ flatpak_packages.stderr }}"
-          returncode: "{{ flatpak_packages.rc }}"
-          failed: "{{ flatpak_packages.failed }}"
+          Command: uptime
+          stdout: "{{ uptime_output.stdout }}"
+          stderr: "{{ uptime_output.stderr }}"
+          returncode: "{{ uptime_output.rc }}"
+          failed: "{{ uptime_output.failed }}"
           ---
-        dest: "/root/flatpak_installed_packages_debug.txt"
+        dest: "/root/all_debug_info.txt"
         append: yes
         mode: '0644'
