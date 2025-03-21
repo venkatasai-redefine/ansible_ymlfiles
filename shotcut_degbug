@@ -1,40 +1,26 @@
 ---
-- name: Collect Flatpak Shotcut Debug Info
-  hosts: all  # Target all hosts in your inventory
-  gather_facts: false # Improves performance by not gathering all facts
-
+- hosts: all
+  gather_facts: false
   tasks:
-    - name: Check if Flatpak is installed
+    - name: Check if flatpak is installed
       command: which flatpak
       register: flatpak_check
-      ignore_errors: true # Continue even if flatpak is not found
+      ignore_errors: true
 
-    - name: Collect Flatpak Shotcut info
+    - name: Collect Shotcut Flatpak info
       command: flatpak list | grep shotcut
-      register: flatpak_shotcut_info
-      when: flatpak_check.rc == 0 # Only run if flatpak is installed
-      ignore_errors: true # Continue even if shotcut is not installed.
+      register: shotcut_info
+      when: flatpak_check.rc == 0
 
-    - name: Create debug directory
+    - name: Create debug info directory
       delegate_to: localhost
       file:
-        path: "debug_shotcut_info"
+        path: "shotcut_debug_info"
         state: directory
 
-    - name: Save Flatpak Shotcut info to file
+    - name: Save Shotcut Flatpak info to file
       delegate_to: localhost
       copy:
-        content: "{{ ansible_host }}:\n{{ flatpak_shotcut_info.stdout_lines | default(['Shotcut not found or Flatpak not installed.']) | join('\n') }}\n\n" #Handles cases where shotcut or flatpak is not installed.
-        dest: "debug_shotcut_info/shotcut_info.txt"
-      run_once: true # Ensure the file is only created once on the first host
-      delegate_to: localhost
-      mode: '0644' # Set file permissions
-
-    - name: Append flatpak info to the file
-      delegate_to: localhost
-      copy:
-        content: "{{ ansible_host }}:\n{{ flatpak_shotcut_info.stdout_lines | default(['Shotcut not found or Flatpak not installed.']) | join('\n') }}\n\n"
-        dest: "debug_shotcut_info/shotcut_info.txt"
-        mode: 'a' # Append to the file
-      when: ansible_play_hosts.index(inventory_hostname) > 0 # Skip the first host
-      delegate_to: localhost
+        content: "{{ inventory_hostname }}:\n{{ shotcut_info.stdout_lines | default(['flatpak not installed or shotcut not found']) | join('\n') }}\n\n"
+        dest: "shotcut_debug_info/shotcut_flatpak_info.txt"
+        mode: '0644'
