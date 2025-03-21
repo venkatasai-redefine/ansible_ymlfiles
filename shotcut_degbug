@@ -1,35 +1,25 @@
 ---
-- name: Gather debug information from 300 Linux machines
+- name: Collect Uptime Debug Info
   hosts: all
-  gather_facts: no
+  gather_facts: false # Uptime doesn't need facts
+
   tasks:
-    - name: Run a dummy command (e.g., uptime) to collect debug info
-      command: uptime
+    - name: Get Uptime
+      shell: uptime
       register: uptime_output
-      ignore_errors: yes  # Continue if any command fails
 
-    - name: Collect debug information for the command
+    - name: Create debug info directory (if needed)
+      file:
+        path: /tmp/debug_info
+        state: directory
+      delegate_to: localhost # Run only on the control node
+
+    - name: Save Uptime to file
+      copy:
+        content: "{{ inventory_hostname }}:\n{{ uptime_output.stdout }}\n"
+        dest: "/tmp/debug_info/{{ inventory_hostname }}_uptime.txt"
+      delegate_to: localhost # Run only on the control node
+
+    - name: Display uptime on the host
       debug:
-        msg: |
-          Host: {{ inventory_hostname }}
-          Command: uptime
-          stdout: "{{ uptime_output.stdout }}"
-          stderr: "{{ uptime_output.stderr }}"
-          returncode: "{{ uptime_output.rc }}"
-          failed: "{{ uptime_output.failed }}"
-          ---
-
-    - name: Append debug information to a file in /tmp directory
-      local_action:
-        module: copy
-        content: |
-          Host: {{ inventory_hostname }}
-          Command: uptime
-          stdout: "{{ uptime_output.stdout }}"
-          stderr: "{{ uptime_output.stderr }}"
-          returncode: "{{ uptime_output.rc }}"
-          failed: "{{ uptime_output.failed }}"
-          ---
-        dest: "/tmp/all_debug_info.txt"
-        append: yes  # Appends the debug info from each host to the same file
-        mode: '0644'
+        msg: "{{ inventory_hostname }}: {{ uptime_output.stdout }}"
