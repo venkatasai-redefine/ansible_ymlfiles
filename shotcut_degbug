@@ -1,20 +1,40 @@
 ---
-- hosts: all
-  gather_facts: false
+- name: Collect Flatpak Shotcut Debug Info
+  hosts: all  # Target all hosts in your inventory
+  gather_facts: false # Improves performance by not gathering all facts
+
   tasks:
-    - name: Run  command
+    - name: Check if Flatpak is installed
+      command: which flatpak
+      register: flatpak_check
+      ignore_errors: true # Continue even if flatpak is not found
+
+    - name: Collect Flatpak Shotcut info
       command: flatpak list | grep shotcut
-      register: uptime_output
+      register: flatpak_shotcut_info
+      when: flatpak_check.rc == 0 # Only run if flatpak is installed
+      ignore_errors: true # Continue even if shotcut is not installed.
 
-    - name: Create debug info directory (if it doesn't exist)
+    - name: Create debug directory
+      delegate_to: localhost
       file:
-        path: /tmp/debug_info
+        path: "debug_shotcut_info"
         state: directory
-      delegate_to: localhost # Run this only on the control node
 
-    - name: Append uptime output to a single file
-      local_action:
-        module: lineinfile
-        path: /tmp/debug_info/all_hosts.txt
-        line: "{{ inventory_hostname }}: {{ uptime_output.stdout }}"
-        create: yes
+    - name: Save Flatpak Shotcut info to file
+      delegate_to: localhost
+      copy:
+        content: "{{ ansible_host }}:\n{{ flatpak_shotcut_info.stdout_lines | default(['Shotcut not found or Flatpak not installed.']) | join('\n') }}\n\n" #Handles cases where shotcut or flatpak is not installed.
+        dest: "debug_shotcut_info/shotcut_info.txt"
+      run_once: true # Ensure the file is only created once on the first host
+      delegate_to: localhost
+      mode: '0644' # Set file permissions
+
+    - name: Append flatpak info to the file
+      delegate_to: localhost
+      copy:
+        content: "{{ ansible_host }}:\n{{ flatpak_shotcut_info.stdout_lines | default(['Shotcut not found or Flatpak not installed.']) | join('\n') }}\n\n"
+        dest: "debug_shotcut_info/shotcut_info.txt"
+        mode: 'a' # Append to the file
+      when: ansible_play_hosts.index(inventory_hostname) > 0 # Skip the first host
+      delegate_to: localhost
