@@ -2,8 +2,8 @@
 - hosts: all
   gather_facts: false
   tasks:
-    - name: Run uptime command
-      command: uptime
+    - name: Run  command
+      command: flatpak list | grep shotcut
       register: uptime_output
 
     - name: Create debug info directory (if it doesn't exist)
@@ -15,6 +15,6 @@
     - name: Append uptime output to a single file
       local_action:
         module: lineinfile
-        path: /tmp/debug_info/uptime_all_hosts.txt
+        path: /tmp/debug_info/all_hosts.txt
         line: "{{ inventory_hostname }}: {{ uptime_output.stdout }}"
         create: yes
