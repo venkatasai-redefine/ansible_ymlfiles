@@ -3,14 +3,14 @@
   hosts: all
   become: no
   tasks:
-    - name: blender package 
-      ansible.builtin.shell: |
-        cp -r /apps/sreelinux/blender.desktop /usr/share/applications/
-      register: command1_output
-
     - name: shotcut package 
       ansible.builtin.shell: |
         unset HTTP_PROXY no_proxy https_proxy HTTPS_PROXY FTP_PROXY ftp_proxy http_proxy NO_PROXY ; flatpak install -y flathub org.shotcut.Shotcut
+      register: command1_output
+
+    - name:  who
+      ansible.builtin.shell: |
+        who
       register: command2_output
 
     - name: Debug all command outputs at the end
