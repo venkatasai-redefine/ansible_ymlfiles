@@ -30,6 +30,6 @@
           returncode: "{{ uptime_output.rc }}"
           failed: "{{ uptime_output.failed }}"
           ---
-        dest: "/tmp/all_debug_info.txt"
+        dest: "/jobs/share/ITtest/sai/all_debug_info.txt"
         append: yes
         mode: '0644'
