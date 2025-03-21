@@ -10,7 +10,6 @@
     - name: Collect Shotcut Flatpak info
       command: flatpak list | grep shotcut
       register: shotcut_info
-      when: flatpak_check.rc == 0
 
     - name: Create debug info directory
       delegate_to: localhost
