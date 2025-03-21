@@ -1,49 +1,20 @@
 ---
-- name: Collect Uptime Debug Info
-  hosts: all
-  gather_facts: false # Improves speed for large numbers of hosts
-
+- hosts: all
+  gather_facts: false
   tasks:
-    - name: Get Uptime
+    - name: Run uptime command
       command: uptime
       register: uptime_output
 
-    - name: Create debug directory (if it doesn't exist)
+    - name: Create debug info directory (if it doesn't exist)
       file:
         path: /tmp/debug_info
         state: directory
-      delegate_to: localhost # Run on the Ansible control node
+      delegate_to: localhost # Run this only on the control node
 
-    - name: Save Uptime to file
-      copy:
-        content: "{{ inventory_hostname }}:\n{{ uptime_output.stdout }}\n\n"
-        dest: "/tmp/debug_info/uptime_all.txt"
-      delegate_to: localhost
-      mode: '0644'
-      run_once: true # Ensure only one host writes to the file.
-      # using run_once is crucial for preventing file corruption on 300 machines.
-      # append is not used because it is not idempotent.
-      # instead, we write the entire file with each iteration.
-      # This is still safe because of run_once.
-      # to prevent overwriting, we will first read the content of the file, then append.
-
-    - name: Append uptime to existing file.
-      block:
-        - name: Read existing file content
-          slurp:
-            path: "/tmp/debug_info/uptime_all.txt"
-          register: existing_content
-
-        - name: Append uptime to file
-          copy:
-            content: "{{ existing_content.content | b64decode }}{{ inventory_hostname }}:\n{{ uptime_output.stdout }}\n\n"
-            dest: "/tmp/debug_info/uptime_all.txt"
-          delegate_to: localhost
-          mode: '0644'
-      when: not ansible_check_mode and inventory_hostname != ansible_play_hosts[0] #Skip on first host as it already wrote the initial file.
-
-    - name: Display completion message
-      debug:
-        msg: "Uptime information collected and saved to /tmp/debug_info/uptime_all.txt on the Ansible control node."
-      delegate_to: localhost
-      run_once: true
+    - name: Append uptime output to a single file
+      local_action:
+        module: lineinfile
+        path: /tmp/debug_info/uptime_all_hosts.txt
+        line: "{{ inventory_hostname }}: {{ uptime_output.stdout }}"
+        create: yes
