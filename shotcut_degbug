@@ -1,0 +1,34 @@
+---
+- name: Get debug information of shotcut
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: Get installed flatpak packages with debug
+      command: flatpak list | grep shotcut
+      register: flatpak_packages
+      ignore_errors: yes  # In case the command fails on any machine, continue
+
+    - name: Capture debug information for the flatpak command
+      debug:
+        msg: |
+          Host: {{ inventory_hostname }}
+          Command: flatpak list | grep shotcut
+          stdout: "{{ flatpak_packages.stdout }}"
+          stderr: "{{ flatpak_packages.stderr }}"
+          returncode: "{{ flatpak_packages.rc }}"
+          failed: "{{ flatpak_packages.failed }}"
+
+    - name: Append the debug information to a central output file
+      local_action:
+        module: copy
+        content: |
+          Host: {{ inventory_hostname }}
+          Command: flatpak list --app --columns=name
+          stdout: "{{ flatpak_packages.stdout }}"
+          stderr: "{{ flatpak_packages.stderr }}"
+          returncode: "{{ flatpak_packages.rc }}"
+          failed: "{{ flatpak_packages.failed }}"
+          ---
+        dest: "/path/to/output/flatpak_installed_packages_debug.txt"
+        append: yes
+        mode: '0644'
