@@ -1,5 +1,5 @@
 ---
-- name: packeage update 
+- name: package depolyment  
   hosts: all
   become: no
   tasks:
