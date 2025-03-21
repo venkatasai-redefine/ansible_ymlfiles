@@ -3,12 +3,12 @@
   hosts: all
   gather_facts: no
   tasks:
-    - name: Run a dummy command to collect debug info (e.g., "uptime")
+    - name: Run a dummy command (e.g., uptime) to collect debug info
       command: uptime
       register: uptime_output
-      ignore_errors: yes  # In case of failure, continue to the next host
+      ignore_errors: yes  # Continue if any command fails
 
-    - name: Collect debug information
+    - name: Collect debug information for the command
       debug:
         msg: |
           Host: {{ inventory_hostname }}
@@ -18,8 +18,8 @@
           returncode: "{{ uptime_output.rc }}"
           failed: "{{ uptime_output.failed }}"
           ---
-    
-    - name: Append all debug information to a central output file
+
+    - name: Append debug information to a file in /tmp directory
       local_action:
         module: copy
         content: |
@@ -30,6 +30,6 @@
           returncode: "{{ uptime_output.rc }}"
           failed: "{{ uptime_output.failed }}"
           ---
-        dest: "/jobs/share/ITtest/sai/all_debug_info.txt"
-        append: yes
+        dest: "/tmp/all_debug_info.txt"
+        append: yes  # Appends the debug info from each host to the same file
         mode: '0644'
