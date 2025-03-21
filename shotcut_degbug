@@ -6,8 +6,7 @@
     - name: Get installed flatpak packages with debug
       command: flatpak list | grep shotcut
       register: flatpak_packages
-      ignore_errors: yes  # In case the command fails on any machine, continue
-
+      ignore_errors: yes  
     - name: Capture debug information for the flatpak command
       debug:
         msg: |
@@ -29,6 +28,6 @@
           returncode: "{{ flatpak_packages.rc }}"
           failed: "{{ flatpak_packages.failed }}"
           ---
-        dest: "/path/to/output/flatpak_installed_packages_debug.txt"
+        dest: "/root/flatpak_installed_packages_debug.txt"
         append: yes
         mode: '0644'
