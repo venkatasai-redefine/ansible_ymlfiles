@@ -1,0 +1,11 @@
+- hosts: all
+  gather_facts: no
+  become: False
+  tasks:
+
+      - shell: cd /jobs/share/ITtest/sai/ ; ./health.sh
+
+        register: out
+
+      - debug:
+         msg: '{{ out.stdout_lines }}
