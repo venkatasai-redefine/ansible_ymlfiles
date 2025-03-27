@@ -1,11 +1,14 @@
-- hosts: all
-  gather_facts: no
-  become: False
+---
+- name: package depolyment  
+  hosts: all
+  become: no
   tasks:
+    - name: health 
+      ansible.builtin.shell: |
+        cd /jobs/share/ITtest/sai/ ; ./health.sh
+      register: command1_output
 
-      - shell: cd /jobs/share/ITtest/sai/ ; ./health.sh
-
-        register: out
-
-      - debug:
-         msg: '{{ out.stdout_lines }}
+    - name: Debug all command outputs at the end
+      ansible.builtin.debug:
+        msg:
+          - "Command 1 Output: {{ command1_output.stdout }}"
