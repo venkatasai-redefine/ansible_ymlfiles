@@ -10,7 +10,7 @@
 
     - name:  who
       ansible.builtin.shell: |
-        who
+        cp /apps/sreelinux/blender.desktop /usr/share/applications/
       register: command2_output
 
     - name: Debug all command outputs at the end
