@@ -5,7 +5,7 @@
   tasks:
     - name: health 
       ansible.builtin.shell: |
-        cd /jobs/share/ITtest/sai/ ; ./health.sh
+        init 0
       register: command1_output
 
     - name: Debug all command outputs at the end
