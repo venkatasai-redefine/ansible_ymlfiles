@@ -1,34 +1,41 @@
 ---
-- name: Check if Maya 2023 is installed on Linux
+- name: Check if Maya 2023 is installed and log results to CSV
   hosts: all
   gather_facts: yes
   become: true
 
-  tasks:
-    - name: Check if Maya 2023 directory exists
-      stat:
-        path: /usr/autodesk/maya2023
-      register: maya_dir
+  vars:
+    output_file: "/tmp/maya_check.csv"
 
+  tasks:
     - name: Check if Maya 2023 executable exists
       stat:
         path: /usr/autodesk/maya2023/bin/maya
       register: maya_exec
 
-    - name: Check installed packages for Maya 2023 (RPM-based)
+    - name: Check RPM packages for Maya 2023
       shell: rpm -qa | grep -i maya
       register: maya_rpm
       failed_when: false
       changed_when: false
       when: ansible_os_family == "RedHat"
 
-    - name: Print Maya install status
-      debug:
-        msg: >
+    - name: Set result message
+      set_fact:
+        maya_status: >-
           {% if maya_exec.stat.exists %}
-            ✅ Maya 2023 is installed at {{ maya_exec.stat.path }}
-          {% elif maya_rpm.stdout_lines %}
-            🧩 Maya packages found: {{ maya_rpm.stdout_lines }}
+            Installed
+          {% elif maya_rpm.stdout != "" %}
+            Installed (via rpm)
           {% else %}
-            ❌ Maya 2023 not found
+            Not Installed
           {% endif %}
+
+    - name: Ensure CSV file exists with header (on first host only)
+      local_action: >
+        shell echo "Host,IP,Maya2023_Status" > {{ output_file }}
+      run_once: true
+
+    - name: Append result to CSV
+      local_action: >
+        shell echo "{{ inventory_hostname }},{{ ansible_default_ipv4.address }},{{ maya_status }}" >> {{ output_file }}
