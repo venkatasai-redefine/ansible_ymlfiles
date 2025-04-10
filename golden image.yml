@@ -1,0 +1,34 @@
+---
+- name: Check if Maya 2023 is installed on Linux
+  hosts: all
+  gather_facts: yes
+  become: true
+
+  tasks:
+    - name: Check if Maya 2023 directory exists
+      stat:
+        path: /usr/autodesk/maya2023
+      register: maya_dir
+
+    - name: Check if Maya 2023 executable exists
+      stat:
+        path: /usr/autodesk/maya2023/bin/maya
+      register: maya_exec
+
+    - name: Check installed packages for Maya 2023 (RPM-based)
+      shell: rpm -qa | grep -i maya
+      register: maya_rpm
+      failed_when: false
+      changed_when: false
+      when: ansible_os_family == "RedHat"
+
+    - name: Print Maya install status
+      debug:
+        msg: >
+          {% if maya_exec.stat.exists %}
+            ✅ Maya 2023 is installed at {{ maya_exec.stat.path }}
+          {% elif maya_rpm.stdout_lines %}
+            🧩 Maya packages found: {{ maya_rpm.stdout_lines }}
+          {% else %}
+            ❌ Maya 2023 not found
+          {% endif %}
