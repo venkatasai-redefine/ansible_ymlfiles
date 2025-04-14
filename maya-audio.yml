@@ -5,11 +5,16 @@
   tasks:
     - name: deploying packages   
       ansible.builtin.shell: |
-        unset HTTP_PROXY no_proxy https_proxy HTTPS_PROXY FTP_PROXY ftp_proxy http_proxy NO_PROXY ; yum install audiofile audiofile-devel -y ; sudo yum install ffmpeg ffmpeg-devel
+        unset HTTP_PROXY no_proxy https_proxy HTTPS_PROXY FTP_PROXY ftp_proxy http_proxy NO_PROXY ; yum install -y audiofile audiofile-devel 
       register: command1_output
 
+    - name:  installing ffmpeg
+      ansible.builtin.shell: |
+        unset HTTP_PROXY no_proxy https_proxy HTTPS_PROXY FTP_PROXY ftp_proxy http_proxy NO_PROXY ; yum install -y ffmpeg ffmpeg-devel 
+      register: command2_output
 
     - name: Debug all command outputs at the end
       ansible.builtin.debug:
         msg:
           - "Command 1 Output: {{ command1_output.stdout }}"
+          - "Command 2 Output: {{ command2_output.stdout }}"
