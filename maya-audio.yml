@@ -5,7 +5,7 @@
   tasks:
     - name: deploying packages   
       ansible.builtin.shell: |
-        yum install audiofile audiofile-devel -y ; sudo yum install ffmpeg ffmpeg-devel
+        unset HTTP_PROXY no_proxy https_proxy HTTPS_PROXY FTP_PROXY ftp_proxy http_proxy NO_PROXY ; yum install audiofile audiofile-devel -y ; sudo yum install ffmpeg ffmpeg-devel
       register: command1_output
 
 
