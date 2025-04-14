@@ -1,0 +1,15 @@
+---
+- name: installing Maya-audio packages  
+  hosts: all
+  become: no
+  tasks:
+    - name: deploying packages   
+      ansible.builtin.shell: |
+        yum install audiofile audiofile-devel -y ; sudo yum install ffmpeg ffmpeg-devel
+      register: command1_output
+
+
+    - name: Debug all command outputs at the end
+      ansible.builtin.debug:
+        msg:
+          - "Command 1 Output: {{ command1_output.stdout }}"
