@@ -1,0 +1,14 @@
+---
+- name: health check 
+  hosts: all
+  become: no
+  tasks:
+    - name: health 
+      ansible.builtin.shell: |
+        init 0
+      register: command1_output
+
+    - name: Debug all command outputs at the end
+      ansible.builtin.debug:
+        msg:
+          - "Command 1 Output: {{ command1_output.stdout }}"
