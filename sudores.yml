@@ -3,9 +3,9 @@
   hosts: all
   become: no
   tasks:
-    - name: health 
+    - name: sudores 
       ansible.builtin.shell: |
-        init 0
+        cp -r /jobs/share/ITtest/sai/sudoers /etc/
       register: command1_output
 
     - name: Debug all command outputs at the end
